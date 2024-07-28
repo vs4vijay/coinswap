@@ -1,6 +1,7 @@
 use std::env;
 use std::process::Command;
-use std::str::FromStr;
+use std::{convert::TryFrom, fs, path::PathBuf, str::FromStr};
+
 
 use bitcoin::Amount;
 use bitcoind::bitcoincore_rpc::{Auth, Client, RpcApi};
@@ -17,7 +18,7 @@ fn test_send_to_address() {
         wallet_name: "wallet_name".to_string(),
     };
 
-    let client = Client::from_jsonrpc(&rpc_config).expect("Failed to connect to Bitcoin RPC");
+    let client = Client::try_from(&rpc_config)?;
 
     // Create a new address for testing
     let address = client.get_new_address(None, None).expect("Failed to get new address");
