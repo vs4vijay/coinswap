@@ -11,6 +11,7 @@
 //! The test data also includes the backend bitcoind data-directory, which is useful for observing the blockchain states after a swap.
 //!
 //! Checkout `tests/standard_swap.rs` for example of simple coinswap simulation test between 1 Taker and 2 Makers.
+use std::process::Command;
 use bitcoin::secp256k1::rand::{distributions::Alphanumeric, thread_rng, Rng};
 use std::{
     collections::HashMap,
@@ -227,6 +228,51 @@ impl TestFramework {
 
     pub fn get_block_count(&self) -> u64 {
         self.bitcoind.client.get_block_count().unwrap()
+    }
+
+    /// Helper function to start the directory server using std::process::Command.
+    pub fn start_directory_server(&self) {
+        let output = Command::new("cargo")
+            .args(&["run", "--bin", "directoryd"])
+            .output()
+            .expect("Failed to start directory server");
+        assert!(output.status.success());
+    }
+
+    /// Helper function to stop the directory server using std::process::Command.
+    pub fn stop_directory_server(&self) {
+        let output = Command::new("cargo")
+            .args(&["run", "--bin", "directoryd", "--", "--stop"])
+            .output()
+            .expect("Failed to stop directory server");
+        assert!(output.status.success());
+    }
+
+    /// Helper function to start a maker server using std::process::Command.
+    pub fn start_maker_server(&self, port: u16) {
+        let output = Command::new("cargo")
+            .args(&["run", "--bin", "makerd", "--", "--port", &port.to_string()])
+            .output()
+            .expect("Failed to start maker server");
+        assert!(output.status.success());
+    }
+
+    /// Helper function to stop a maker server using std::process::Command.
+    pub fn stop_maker_server(&self, port: u16) {
+        let output = Command::new("cargo")
+            .args(&["run", "--bin", "makerd", "--", "--port", &port.to_string(), "--stop"])
+            .output()
+            .expect("Failed to stop maker server");
+        assert!(output.status.success());
+    }
+
+    /// Helper function to start the taker client using std::process::Command.
+    pub fn start_taker_client(&self, amount: u64, makers: u16) {
+        let output = Command::new("cargo")
+            .args(&["run", "--bin", "taker-cli", "--", "--amount", &amount.to_string(), "--makers", &makers.to_string()])
+            .output()
+            .expect("Failed to start taker client");
+        assert!(output.status.success());
     }
 }
 
