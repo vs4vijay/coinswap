@@ -34,9 +34,3 @@ build-macos-aarch = ["openssl-sys/vendored"]
 integration-test = []
 # Only used for running the tor
 tor = ['dep:libtor', 'dep:mitosis']
-
-
-
-[[bin]]
-name = "taker-cli"
-path = "bin/taker_cli.rs"
