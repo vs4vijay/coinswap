@@ -2,8 +2,7 @@
 
 use std::assert_eq;
 
-use std::process::Command;
-use std::{convert::TryFrom, fs, path::PathBuf, str::FromStr};
+use std::{convert::TryFrom, fs, path::PathBuf, process::Command, str::FromStr};
 
 mod test_framework;
 use bitcoin::Amount;
